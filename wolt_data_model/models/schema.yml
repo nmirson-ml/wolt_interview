@@ -80,40 +80,33 @@ models:
         data_type: TIMESTAMP WITH TIME ZONE
 
   - name: staging_item_logs
-    config:
-      contract:
-        enforced: true
     columns:
       - name: log_item_id
         data_type: VARCHAR
       - name: item_key
         data_type: VARCHAR
-      - name: time_log_created_utc
-        data_type: TIMESTAMP
       - name: brand_name
         data_type: VARCHAR
       - name: item_category
         data_type: VARCHAR
+      - name: product_name
+        data_type: VARCHAR
       - name: number_of_units
         data_type: INTEGER
-      - name: time_item_created_in_source_utc
-        data_type: TIMESTAMP
       - name: weight_in_grams
         data_type: INTEGER
-      - name: name_lang_0
-        data_type: VARCHAR
-      - name: name_value_0
-        data_type: VARCHAR
-      - name: name_lang_1
-        data_type: VARCHAR
-      - name: name_value_1
-        data_type: VARCHAR
       - name: currency
         data_type: VARCHAR
       - name: product_base_price
         data_type: DECIMAL(10,4)
+      - name: product_base_price_ex_vat
+        data_type: DOUBLE
       - name: vat_rate
         data_type: DECIMAL(10,2)
+      - name: record_valid_from
+        data_type: TIMESTAMP
+      - name: record_valid_to
+        data_type: TIMESTAMP
 
   # Dimension Tables
   - name: dim_customer
@@ -132,21 +125,20 @@ models:
       - name: is_repeat_customer
         data_type: BOOLEAN
 
-
-  - name: dim_items
+  - name: dim_items_scd
     config:
       contract:
         enforced: true
     columns:
-      - name: item_key
-        data_type: VARCHAR
       - name: log_item_id
         data_type: VARCHAR
-        constraints:
-          - type: primary_key
+      - name: item_key
+        data_type: VARCHAR
       - name: brand_name
         data_type: VARCHAR
       - name: item_category
+        data_type: VARCHAR
+      - name: product_name
         data_type: VARCHAR
       - name: number_of_units
         data_type: INTEGER
@@ -160,11 +152,38 @@ models:
         data_type: DOUBLE
       - name: vat_rate
         data_type: DECIMAL(10,2)
-      - name: product_name_en
-        data_type: VARCHAR
       - name: record_valid_from
         data_type: TIMESTAMP
       - name: record_valid_to
+        data_type: TIMESTAMP
+
+
+  - name: dim_items
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: item_key
+        data_type: VARCHAR
+      - name: brand_name
+        data_type: VARCHAR
+      - name: item_category
+        data_type: VARCHAR
+      - name: product_name
+        data_type: VARCHAR
+      - name: number_of_units
+        data_type: INTEGER
+      - name: weight_in_grams
+        data_type: INTEGER
+      - name: currency
+        data_type: VARCHAR
+      - name: product_base_price
+        data_type: DECIMAL(10,4)
+      - name: product_base_price_ex_vat
+        data_type: DOUBLE
+      - name: vat_rate
+        data_type: DECIMAL(10,2)
+      - name: record_valid_from
         data_type: TIMESTAMP
 
 

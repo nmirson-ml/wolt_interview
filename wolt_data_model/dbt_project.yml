@@ -36,7 +36,7 @@ seeds:
   wolt_data_model:
     +enabled: true
     +schema: raw
-    Wolt_snack_store_items_logs:
+    Wolt_snack_store_item_logs:
       LOG_ITEM_ID: varchar(64) # Unique log identifier
       ITEM_KEY: varchar(64) # Unique identifier for the item
       TIME_LOG_CREATED_UTC: timestamp # Timestamp for when the log was created

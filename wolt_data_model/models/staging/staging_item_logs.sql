@@ -1,54 +1,90 @@
-{{ config(
-    materialized = 'table',
-    schema='staging'
-) }}
+{{
+    config(
+        materialized = 'incremental',
+        schema = 'staging',
+        unique_key = ['log_item_id'],
+        on_schema_change = 'fail'
+    )
+}}
 
 WITH expanded_payload AS (
-  SELECT
-        -- Top-level fields
-        LOG_ITEM_ID,
+   SELECT
+        -- Core identifiers
+        LOG_ITEM_ID AS log_item_id,
+        ITEM_KEY AS item_key,
         REPLACE(TIME_LOG_CREATED_UTC, 'Z', '')::TIMESTAMP AS time_log_created_utc,
 
-        -- Extract individual fields from JSON
+        -- Extract fields from JSON payload
         JSON_EXTRACT(PAYLOAD, '$.brand_name')::VARCHAR AS brand_name,
         JSON_EXTRACT(PAYLOAD, '$.item_category')::VARCHAR AS item_category,
-        JSON_EXTRACT(PAYLOAD, '$.item_key')::VARCHAR AS item_key,
+
+        -- Prioritize English name if it exists
+        CASE
+            WHEN JSON_EXTRACT(PAYLOAD, '$.name[0].lang')::VARCHAR  LIKE '%en%' THEN JSON_EXTRACT(PAYLOAD, '$.name[0].value')
+            WHEN JSON_EXTRACT(PAYLOAD, '$.name[1].lang')::VARCHAR  LIKE '%en%' THEN JSON_EXTRACT(PAYLOAD, '$.name[1].value')
+            ELSE JSON_EXTRACT(PAYLOAD, '$.name[0].value')
+        END::VARCHAR AS product_name,
+
+        -- Numeric fields
         JSON_EXTRACT(PAYLOAD, '$.number_of_units')::INTEGER AS number_of_units,
-        JSON_EXTRACT(PAYLOAD, '$.time_item_created_in_source_utc')::TIMESTAMP AS time_item_created_in_source_utc,
         JSON_EXTRACT(PAYLOAD, '$.weight_in_grams')::INTEGER AS weight_in_grams,
 
-        -- Handle nullable fields
-        JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].currency')::VARCHAR AS currency,
-        -- Replace invalid values ("null") with NULL for decimals
+        -- Extract and clean price attributes
+        TRIM(JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].currency'))::VARCHAR AS currency,
         NULLIF(JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].product_base_price'), 'null')::DECIMAL(10, 4) AS product_base_price,
         NULLIF(JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].vat_rate_in_percent'), 'null')::DECIMAL(10, 2) AS vat_rate,
 
-        -- Extract nested array: name translations
-        JSON_EXTRACT(PAYLOAD, '$.name[0].lang')::VARCHAR AS name_lang_0,
-        JSON_EXTRACT(PAYLOAD, '$.name[0].value')::VARCHAR AS name_value_0,
-        JSON_EXTRACT(PAYLOAD, '$.name[1].lang')::VARCHAR AS name_lang_1,
-        JSON_EXTRACT(PAYLOAD, '$.name[1].value')::VARCHAR AS name_value_1
+        -- Calculate price excluding VAT
+        CASE
+            WHEN JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].product_base_price') IS NOT NULL
+                 AND JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].vat_rate_in_percent') IS NOT NULL
+            THEN (
+                NULLIF(JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].product_base_price'), 'null')::DECIMAL(10, 4) /
+                (1 + NULLIF(JSON_EXTRACT(PAYLOAD, '$.price_attributes[0].vat_rate_in_percent'), 'null')::DECIMAL(10, 2) / 100)
+            )
+            ELSE NULL
+        END AS product_base_price_ex_vat,
+
+        -- Extract time of creation from source
+        REPLACE(JSON_EXTRACT(PAYLOAD, '$.time_item_created_in_source_utc'), 'null', NULL)::TIMESTAMP AS time_item_created_in_source_utc
+
     FROM {{ ref('raw_wolt_snack_store_item_logs') }}
+),
+ranked_items AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY item_key
+            ORDER BY time_log_created_utc
+        ) AS row_number,
+        LEAD(time_log_created_utc) OVER (
+            PARTITION BY item_key
+            ORDER BY time_log_created_utc
+        ) AS record_valid_to
+    FROM expanded_payload
 )
 SELECT
     -- Top-level fields
-    LOG_ITEM_ID AS log_item_id,
+    log_item_id,
     item_key,
-    time_log_created_utc,
     brand_name,
     item_category,
+    product_name, -- Prioritized English name
     number_of_units,
-    time_item_created_in_source_utc,
     weight_in_grams,
-
-    -- Extracted name translations
-    name_lang_0,
-    name_value_0,
-    name_lang_1,
-    name_value_1,
-
     -- Extracted price attributes
     currency,
     product_base_price,
-    vat_rate
-FROM expanded_payload
+    product_base_price_ex_vat,
+    vat_rate,
+    -- incremental load fields
+    time_log_created_utc AS record_valid_from,
+    record_valid_to,
+
+FROM ranked_items
+WHERE row_number = 1
+  OR NOT EXISTS (
+      SELECT 1
+      FROM {{ this }}
+      WHERE {{ this }}.log_item_id = ranked_items.log_item_id --recurrent logic to avoid duplicates
+  )
