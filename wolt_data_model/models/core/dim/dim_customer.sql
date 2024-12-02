@@ -8,7 +8,7 @@
 -- models/dim_customers.sql
 SELECT
     customer_key,
-    MIN(time_order_received_utc) AS first_purchase_date,
+    CAST(MIN(time_order_received_utc) AS DATE) AS first_purchase_date,
     COUNT(DISTINCT purchase_key) AS total_purchases,
     COUNT(DISTINCT purchase_key) > 1 AS is_repeat_customer
 FROM {{ ref('staging_purchase_logs') }}
