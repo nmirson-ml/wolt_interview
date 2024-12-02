@@ -1,0 +1,19 @@
+## Refer to Using dbt with Dagster, part one for info about this file:
+## https://docs.dagster.io/integrations/dbt/using-dbt-with-dagster/part-one
+
+# version: 2
+
+# sources:
+#   - name: csv_input
+#     meta:
+#       external_location: "read_csv('{{ env_var('INPUT_FILES_PATH') }}/{name}.csv')"
+#     tables:
+#       - name: item_logs
+#         identifier: Wolt_snack_store_item_logs
+#       - name: promos
+#         identifier: Wolt_snack_store_promos
+#       - name: purchase_logs
+#         identifier: Wolt_snack_store_purchase_logs
+
+
+

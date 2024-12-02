@@ -1,0 +1,375 @@
+version: 2
+
+models:
+  # Staging Models
+  - name: staging_purchase_logs
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: time_order_received_utc
+        data_type: TIMESTAMP
+      - name: purchase_key
+        data_type: VARCHAR
+      - name: customer_key
+        data_type: VARCHAR
+      - name: delivery_distance_line_meters
+        data_type: INTEGER
+      - name: wolt_service_fee
+        data_type: DECIMAL(10,2)
+      - name: courier_base_fee
+        data_type: DECIMAL(10,2)
+      - name: total_basket_value
+        data_type: DECIMAL(10,2)
+      - name: loaded_timestamp
+        data_type: TIMESTAMP WITH TIME ZONE
+      # Explicitly defined item basket details
+      - name: item_count_1
+        data_type: INTEGER
+      - name: item_key_1
+        data_type: VARCHAR
+      - name: item_count_2
+        data_type: INTEGER
+      - name: item_key_2
+        data_type: VARCHAR
+      - name: item_count_3
+        data_type: INTEGER
+      - name: item_key_3
+        data_type: VARCHAR
+      - name: item_count_4
+        data_type: INTEGER
+      - name: item_key_4
+        data_type: VARCHAR
+      - name: item_count_5
+        data_type: INTEGER
+      - name: item_key_5
+        data_type: VARCHAR
+      - name: item_count_6
+        data_type: INTEGER
+      - name: item_key_6
+        data_type: VARCHAR
+      - name: item_count_7
+        data_type: INTEGER
+      - name: item_key_7
+        data_type: VARCHAR
+      - name: item_count_8
+        data_type: INTEGER
+      - name: item_key_8
+        data_type: VARCHAR
+      - name: item_count_9
+        data_type: INTEGER
+      - name: item_key_9
+        data_type: VARCHAR
+      
+  - name: staging_promos
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: promo_start_date
+        data_type: DATE
+      - name: promo_end_date
+        data_type: DATE
+      - name: item_key
+        data_type: VARCHAR
+      - name: promo_type
+        data_type: VARCHAR
+      - name: discount_in_percentage
+        data_type: INTEGER
+      - name: loaded_timestamp
+        data_type: TIMESTAMP WITH TIME ZONE
+
+  - name: staging_item_logs
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: log_item_id
+        data_type: VARCHAR
+      - name: item_key
+        data_type: VARCHAR
+      - name: time_log_created_utc
+        data_type: TIMESTAMP
+      - name: brand_name
+        data_type: VARCHAR
+      - name: item_category
+        data_type: VARCHAR
+      - name: number_of_units
+        data_type: INTEGER
+      - name: time_item_created_in_source_utc
+        data_type: TIMESTAMP
+      - name: weight_in_grams
+        data_type: INTEGER
+      - name: name_lang_0
+        data_type: VARCHAR
+      - name: name_value_0
+        data_type: VARCHAR
+      - name: name_lang_1
+        data_type: VARCHAR
+      - name: name_value_1
+        data_type: VARCHAR
+      - name: currency
+        data_type: VARCHAR
+      - name: product_base_price
+        data_type: DECIMAL(10,4)
+      - name: vat_rate
+        data_type: DECIMAL(10,2)
+
+  # Dimension Tables
+  - name: dim_customer
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: customer_key
+        data_type: VARCHAR
+        constraints:
+          - type: primary_key
+      - name: first_purchase_date
+        data_type: TIMESTAMP
+      - name: total_purchases
+        data_type: BIGINT
+      - name: is_repeat_customer
+        data_type: BOOLEAN
+
+
+  - name: dim_items
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: item_key
+        data_type: VARCHAR
+      - name: log_item_id
+        data_type: VARCHAR
+        constraints:
+          - type: primary_key
+      - name: brand_name
+        data_type: VARCHAR
+      - name: item_category
+        data_type: VARCHAR
+      - name: number_of_units
+        data_type: INTEGER
+      - name: weight_in_grams
+        data_type: INTEGER
+      - name: currency
+        data_type: VARCHAR
+      - name: product_base_price
+        data_type: DECIMAL(10,4)
+      - name: product_base_price_ex_vat
+        data_type: DOUBLE
+      - name: vat_rate
+        data_type: DECIMAL(10,2)
+      - name: product_name_en
+        data_type: VARCHAR
+      - name: record_valid_from
+        data_type: TIMESTAMP
+      - name: record_valid_to
+        data_type: TIMESTAMP
+
+
+  - name: dim_time
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: calendar_date
+        data_type: DATE
+        constraints:
+          - type: primary_key
+      - name: year
+        data_type: BIGINT
+      - name: month
+        data_type: BIGINT
+      - name: day
+        data_type: BIGINT
+      - name: day_of_week
+        data_type: BIGINT
+
+  - name: dim_promotions
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: promo_id
+        data_type: VARCHAR
+        constraints:
+          - type: primary_key
+      - name: promo_start_date
+        data_type: DATE
+      - name: promo_end_date
+        data_type: DATE
+      - name: item_key
+        data_type: VARCHAR
+      - name: promo_type
+        data_type: VARCHAR
+      - name: discount_in_percentage
+        data_type: INTEGER
+      - name: loaded_timestamp
+        data_type: TIMESTAMP WITH TIME ZONE
+
+  # Fact Tables
+  - name: fact_purchases
+    description: Fact table containing purchase transactions and related details
+    columns:
+      - name: purchase_key
+        description: Unique identifier for each purchase
+        tests:
+          - unique
+          - not_null
+      
+      - name: time_order_received_utc
+        description: Timestamp when the order was received (in UTC)
+        tests:
+          - not_null
+
+      - name: customer_key
+        description: Foreign key to customer dimension
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_key
+
+      - name: delivery_distance_line_meters
+        description: Direct line distance for delivery in meters
+        tests:
+          - not_null
+
+      - name: wolt_service_fee
+        description: Service fee charged by Wolt
+        tests:
+          - not_null
+
+      - name: courier_base_fee
+        description: Base fee for courier service
+        tests:
+          - not_null
+
+      - name: total_basket_value
+        description: Total value of items in the basket
+        tests:
+          - not_null
+
+      - name: item_count_1
+        description: Quantity of item 1 in the basket
+      - name: item_key_1
+        description: Foreign key to item dimension for item position 1
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_2
+        description: Quantity of item 2 in the basket
+      - name: item_key_2
+        description: Foreign key to item dimension for item position 2
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_3
+        description: Quantity of item 3 in the basket
+      - name: item_key_3
+        description: Foreign key to item dimension for item position 3
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_4
+        description: Quantity of item 4 in the basket
+      - name: item_key_4
+        description: Foreign key to item dimension for item position 4
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_5
+        description: Quantity of item 5 in the basket
+      - name: item_key_5
+        description: Foreign key to item dimension for item position 5
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_6
+        description: Quantity of item 6 in the basket
+      - name: item_key_6
+        description: Foreign key to item dimension for item position 6
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_7
+        description: Quantity of item 7 in the basket
+      - name: item_key_7
+        description: Foreign key to item dimension for item position 7
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_8
+        description: Quantity of item 8 in the basket
+      - name: item_key_8
+        description: Foreign key to item dimension for item position 8
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      - name: item_count_9
+        description: Quantity of item 9 in the basket
+      - name: item_key_9
+        description: Foreign key to item dimension for item position 9
+        tests:
+          - relationships:
+              to: ref('dim_items')
+              field: item_key
+
+      # Promotion details
+      - name: promo_start_date
+        description: Start date of the promotion if applicable
+
+      - name: promo_end_date
+        description: End date of the promotion if applicable
+
+      - name: promo_type
+        description: Type of promotion applied
+
+      - name: discount_in_percentage
+        description: Discount percentage if promotion was applied
+
+      - name: loaded_timestamp
+        description: Timestamp when the record was loaded
+        tests:
+          - not_null
+
+  - name: fact_promotions
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: purchase_key
+        data_type: VARCHAR
+      - name: item_key
+        data_type: VARCHAR
+      - name: time_order_received_utc
+        data_type: TIMESTAMP
+      - name: quantity
+        data_type: INTEGER
+      - name: promo_start_date
+        data_type: DATE
+      - name: promo_end_date
+        data_type: DATE
+      - name: promo_type
+        data_type: VARCHAR
+      - name: discount_in_percentage
+        data_type: INTEGER
+      - name: is_promo_applied
+        data_type: BOOLEAN

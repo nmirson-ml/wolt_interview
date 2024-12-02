@@ -1,0 +1,12 @@
+{{ config(schema='raw') }}
+SELECT
+    TIME_ORDER_RECEIVED_UTC,
+    PURCHASE_KEY,
+    CUSTOMER_KEY,
+    DELIVERY_DISTANCE_LINE_METERS,
+    WOLT_SERVICE_FEE,
+    COURIER_BASE_FEE,
+    TOTAL_BASKET_VALUE,
+    ITEM_BASKET_DESCRIPTION,
+    CURRENT_TIMESTAMP AS loaded_timestamp
+FROM {{ ref('Wolt_snack_store_purchase_logs') }}
