@@ -1,11 +1,7 @@
-# Postcard Company Datamart
+# Wolt Snack Store Interview - Data Modelling 
 
-<!-- This project is a learning-by-doing data model build with `dbt-core` for an imaginary company selling postcards.
-
-The company sells both directly but also through resellers in the majority of European countries. -->
 
 This model is going to be loaded using SQLMesh portable data stack project:
-
 
 Which is based on the following project. 
 - [Portable Data Stack with SQLMesh](https://github.com/cnstlungu/portable-data-stack-sqlmesh) 
@@ -14,22 +10,33 @@ Which is based on the following project.
 
 ![Data Model](resources/data_model.png) 
 
-
 ## Layers
 
 - `raw` unrefined input data
 - `staging` staging area
 - `core` curated data
 
-## Dimensions
-- dim_channel
-- dim_customer
-- dim_date
-- dim_geography
-- dim_sales_agent
+### Core
+#### Dimensions
+- dim_customers
+- dim_items
+- dim_promotions
+- dim_time
 
-## Facts
-- fact_sales
+#### Facts
+- fact_purchases
+- fact_item_sales
+
+### Staging
+- staging_item_logs
+- staging_purchase_logs
+- staging_promotions
+
+### Raw
+- raw_item_logs
+- raw_purchase_logs
+- raw_promotions
+
 
 ## Source Data
 The project uses the following seed data:
