@@ -2,10 +2,8 @@
 
 base:
   outputs:
-
     dev:
       type: duckdb
-
   target: dev
 
 wolt_data_model:
