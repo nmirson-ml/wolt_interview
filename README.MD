@@ -1,12 +1,14 @@
 # Postcard Company Datamart
 
-This project is a learning-by-doing data model build with `dbt-core` for an imaginary company selling postcards.
+<!-- This project is a learning-by-doing data model build with `dbt-core` for an imaginary company selling postcards.
 
-The company sells both directly but also through resellers in the majority of European countries.
+The company sells both directly but also through resellers in the majority of European countries. -->
 
-This model is used by my other projects:
-- [Portable Data Stack with Mage](https://github.com/cnstlungu/portable-data-stack-mage)
-- [Portable Data Stack with SQLMesh](https://github.com/cnstlungu/portable-data-stack-sqlmesh)
+This model is going to be loaded using SQLMesh portable data stack project:
+
+
+Which is based on the following project. 
+- [Portable Data Stack with SQLMesh](https://github.com/cnstlungu/portable-data-stack-sqlmesh) 
 
 # Data model
 
@@ -29,10 +31,34 @@ This model is used by my other projects:
 ## Facts
 - fact_sales
 
+## Source Data
+The project uses the following seed data:
 
-# Getting started
+### Items Log
+Contains historical item data with the following key fields:
+- LOG_ITEM_ID: Unique log identifier
+- ITEM_KEY: Unique identifier for the item
+- TIME_LOG_CREATED_UTC: Timestamp for log creation
+- PAYLOAD: JSON field containing item details
 
-The data is generated as parquet files by a Python script `generator/generate.py` using user-defined assets `assets.py`. These may be adjusted as per needs.
+### Promotions
+Tracks promotional activities:
+- PROMO_START_DATE: Start date of the promotion
+- PROMO_END_DATE: End date of the promotion
+- ITEM_KEY: Unique identifier for the item
+- PROMO_TYPE: Type of the promotion
+- DISCOUNT_IN_PERCENTAGE: Discount percentage
+
+### Purchase Logs
+Records customer purchases:
+- TIME_ORDER_RECEIVED_UTC: Order timestamp
+- PURCHASE_KEY: Primary key for the purchase
+- CUSTOMER_KEY: Customer identifier
+- DELIVERY_DISTANCE_LINE_METERS: Delivery distance
+- WOLT_SERVICE_FEE: Service fee
+- COURIER_BASE_FEE: Base delivery fee
+- TOTAL_BASKET_VALUE: Total order value
+- ITEM_BASKET_DESCRIPTION: JSON array of items and quantities
 
 
 ## Setting up the project
@@ -47,25 +73,18 @@ The data is generated as parquet files by a Python script `generator/generate.py
 
 4. Add environment variables to the virtual environment
 
-`cat .env >> .venv/bin/activate`
+`cat .env >> .venv/Scripts/activate`
+
+If Mac, use `cat .env >> .venv/bin/activate`
+
 
 5. Activate the Python venv
 
 `source .venv/bin/activate`
 
-6. Change the working directory to `generator`
-
-`cd generator`
-
-7. Install the required packages
+6. Install the required packages
 
 `pip install -r requirements.txt`
-
-8. Generate the data
-
-`python3 generate.py`
-
-The generated data will be under `shared/parquet`.
 
 
 ## Running the dbt model
@@ -74,9 +93,9 @@ The generated data will be under `shared/parquet`.
 
 `source .venv/bin/activate`
 
-2. Change directory to `postcard_company`
+2. Make sure you are located in the directory  `wolt_data_model`
 
-`cd postcard_company`
+`cd wolt_data_model`
 
 3. Run `dbt deps` to install dependencies
 
