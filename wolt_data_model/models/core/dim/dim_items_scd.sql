@@ -22,6 +22,6 @@ SELECT
     product_base_price_ex_vat,
     vat_rate,
     -- incremental load fields
-    CAST(time_log_created_utc AS TIMESTAMP) AS record_valid_from,
-    CAST(record_valid_to AS TIMESTAMP) AS record_valid_to,
+    record_valid_from,
+    record_valid_to,
 FROM {{ ref('staging_item_logs') }}

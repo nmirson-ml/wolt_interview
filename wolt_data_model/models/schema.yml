@@ -119,7 +119,7 @@ models:
         constraints:
           - type: primary_key
       - name: first_purchase_date
-        data_type: TIMESTAMP
+        data_type: DATE
       - name: total_purchases
         data_type: BIGINT
       - name: is_repeat_customer
