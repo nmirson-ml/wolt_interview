@@ -11,5 +11,5 @@ wolt_data_model:
   outputs:
     local:
       type: duckdb
-      path: ../shared/db/datamart.duckdb
+      path: "{{ env_var('DUCKDB_FILE_PATH') }}"
       schema: wolt_data_model
