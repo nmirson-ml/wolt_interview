@@ -21,45 +21,11 @@ models:
         data_type: DECIMAL(10,2)
       - name: total_basket_value
         data_type: DECIMAL(10,2)
+      - name: basket_items
+        data_type: VARCHAR
       - name: loaded_timestamp
         data_type: TIMESTAMP WITH TIME ZONE
-      # Explicitly defined item basket details
-      - name: item_count_1
-        data_type: INTEGER
-      - name: item_key_1
-        data_type: VARCHAR
-      - name: item_count_2
-        data_type: INTEGER
-      - name: item_key_2
-        data_type: VARCHAR
-      - name: item_count_3
-        data_type: INTEGER
-      - name: item_key_3
-        data_type: VARCHAR
-      - name: item_count_4
-        data_type: INTEGER
-      - name: item_key_4
-        data_type: VARCHAR
-      - name: item_count_5
-        data_type: INTEGER
-      - name: item_key_5
-        data_type: VARCHAR
-      - name: item_count_6
-        data_type: INTEGER
-      - name: item_key_6
-        data_type: VARCHAR
-      - name: item_count_7
-        data_type: INTEGER
-      - name: item_key_7
-        data_type: VARCHAR
-      - name: item_count_8
-        data_type: INTEGER
-      - name: item_key_8
-        data_type: VARCHAR
-      - name: item_count_9
-        data_type: INTEGER
-      - name: item_key_9
-        data_type: VARCHAR
+
       
   - name: staging_promos
     config:
@@ -89,8 +55,12 @@ models:
         data_type: VARCHAR
       - name: item_category
         data_type: VARCHAR
+      - name: lang
+        data_type: VARCHAR
+        description: "Language code for the product name"
       - name: product_name
         data_type: VARCHAR
+        description: "Product name in the specified language"
       - name: number_of_units
         data_type: INTEGER
       - name: weight_in_grams
@@ -140,6 +110,7 @@ models:
         data_type: VARCHAR
       - name: product_name
         data_type: VARCHAR
+        description: "Product name, prioritizing English if available"
       - name: number_of_units
         data_type: INTEGER
       - name: weight_in_grams
@@ -171,6 +142,7 @@ models:
         data_type: VARCHAR
       - name: product_name
         data_type: VARCHAR
+        description: "Product name, prioritizing English if available"
       - name: number_of_units
         data_type: INTEGER
       - name: weight_in_grams
@@ -226,91 +198,3 @@ models:
         data_type: INTEGER
       - name: loaded_timestamp
         data_type: TIMESTAMP WITH TIME ZONE
-
-# Fact Tables
-  - name: fact_purchases
-    columns:
-      - name: purchase_key
-        description: Unique identifier for each purchase
-      - name: time_order_received_utc
-        description: Timestamp when the order was received (in UTC)
-      - name: customer_key
-        description: Foreign key to customer dimension
-      - name: delivery_distance_line_meters
-        description: Direct line distance for delivery in meters
-      - name: wolt_service_fee
-        description: Service fee charged by Wolt
-      - name: courier_base_fee
-        description: Base fee for courier service
-      - name: total_basket_value
-        description: Total value of items in the basket
-      - name: item_count_1
-        description: Quantity of item 1 in the basket
-      - name: item_key_1
-        description: Foreign key to item dimension for item position 1
-      - name: item_count_2
-        description: Quantity of item 2 in the basket
-      - name: item_key_2
-        description: Foreign key to item dimension for item position 2
-      - name: item_count_3
-        description: Quantity of item 3 in the basket
-      - name: item_key_3
-        description: Foreign key to item dimension for item position 3
-      - name: item_count_4
-        description: Quantity of item 4 in the basket
-      - name: item_key_4
-        description: Foreign key to item dimension for item position 4
-      - name: item_count_5
-        description: Quantity of item 5 in the basket
-      - name: item_key_5
-        description: Foreign key to item dimension for item position 5
-      - name: item_count_6
-        description: Quantity of item 6 in the basket
-      - name: item_key_6
-        description: Foreign key to item dimension for item position 6
-      - name: item_count_7
-        description: Quantity of item 7 in the basket
-      - name: item_key_7
-        description: Foreign key to item dimension for item position 7
-      - name: item_count_8
-        description: Quantity of item 8 in the basket
-      - name: item_key_8
-        description: Foreign key to item dimension for item position 8
-      - name: item_count_9
-        description: Quantity of item 9 in the basket
-      - name: item_key_9
-        description: Foreign key to item dimension for item position 9
-      - name: promo_start_date
-        description: Start date of the promotion if applicable
-      - name: promo_end_date
-        description: End date of the promotion if applicable
-      - name: promo_type
-        description: Type of promotion applied
-      - name: discount_in_percentage
-        description: Discount percentage if promotion was applied
-      - name: loaded_timestamp
-        description: Timestamp when the record was loaded
-
-  # - name: fact_promotions
-  #   config:
-  #     contract:
-  #       enforced: true
-  #   columns:
-  #     - name: purchase_key
-  #       data_type: VARCHAR
-  #     - name: item_key
-  #       data_type: VARCHAR
-  #     - name: time_order_received_utc
-  #       data_type: TIMESTAMP
-  #     - name: quantity
-  #       data_type: INTEGER
-  #     - name: promo_start_date
-  #       data_type: DATE
-  #     - name: promo_end_date
-  #       data_type: DATE
-  #     - name: promo_type
-  #       data_type: VARCHAR
-  #     - name: discount_in_percentage
-  #       data_type: INTEGER
-  #     - name: is_promo_applied
-  #       data_type: BOOLEAN

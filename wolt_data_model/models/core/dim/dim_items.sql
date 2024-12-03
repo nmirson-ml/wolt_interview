@@ -5,15 +5,32 @@
         unique_key = ['item_key']
     )
 }}
-
 WITH latest_items AS (
     -- Filter for the latest records where record_valid_to is NULL
     SELECT *
     FROM {{ ref('staging_item_logs') }}
     WHERE record_valid_to IS NULL
+),
+prioritized_names AS (
+    SELECT 
+        item_key,
+        brand_name,
+        item_category,
+        FIRST_VALUE(product_name) OVER (
+            PARTITION BY item_key
+            ORDER BY CASE WHEN lang = 'en' THEN 0 ELSE 1 END
+        ) AS product_name,
+        number_of_units,
+        weight_in_grams,
+        currency,
+        product_base_price,
+        product_base_price_ex_vat,
+        vat_rate,
+        record_valid_from
+    FROM latest_items
 )
-SELECT
-    item_key,   
+SELECT DISTINCT
+    item_key,
     brand_name,
     item_category,
     product_name,
@@ -24,4 +41,4 @@ SELECT
     product_base_price_ex_vat,
     vat_rate,
     record_valid_from
-FROM latest_items
+FROM prioritized_names

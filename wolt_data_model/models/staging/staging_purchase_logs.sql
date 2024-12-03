@@ -2,7 +2,6 @@
     materialized = 'table',
     schema='staging'
 ) }}
-
 WITH expanded_basket AS (
     SELECT
         -- Top-level fields
@@ -14,11 +13,9 @@ WITH expanded_basket AS (
         COURIER_BASE_FEE::DECIMAL(10, 2) AS courier_base_fee,
         TOTAL_BASKET_VALUE::DECIMAL(10, 2) AS total_basket_value,
 
-        -- Dynamically extract item counts and keys from the basket
-        {% for i in range(1, 10) %}
-        JSON_EXTRACT(ITEM_BASKET_DESCRIPTION, '$[{{ i }}].item_count')::INTEGER AS item_count_{{ i }},
-        JSON_EXTRACT(ITEM_BASKET_DESCRIPTION, '$[{{ i }}].item_key')::VARCHAR AS item_key_{{ i }}{% if not loop.last %},{% endif %}
-        {% endfor %}
+        -- Extract the entire basket as a structured array
+        ITEM_BASKET_DESCRIPTION AS basket_items
+
     FROM {{ ref('raw_wolt_snack_store_purchase_logs') }}
 )
 SELECT
@@ -30,12 +27,6 @@ SELECT
     wolt_service_fee,
     courier_base_fee,
     total_basket_value,
-
-    -- Dynamically extracted basket details
-    {% for i in range(1, 10) %}
-    item_count_{{ i }},
-    item_key_{{ i }}{% if not loop.last %},{% endif %}
-    {% endfor %},
-
+    basket_items,
     CURRENT_TIMESTAMP AS loaded_timestamp
 FROM expanded_basket
