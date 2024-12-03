@@ -13,7 +13,7 @@ WITH expanded_orders AS (
         pl.time_order_received_utc AS order_timestamp,
         CAST(pl.time_order_received_utc AS DATE) AS order_date,
         JSON_EXTRACT(pl.basket_items, '$.item_key[*]') AS item_array
-    FROM {{ ref('staging_purchase_logs') }} pl,
+    FROM {{ ref('staging_purchase_logs') }} pl
 ),
 unnested_items AS (
     SELECT
