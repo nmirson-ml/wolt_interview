@@ -40,7 +40,7 @@ split_items AS (
         product_base_price_ex_vat,
         vat_rate,
         record_valid_from,
-        UNNEST(regexp_split_to_array(en.name_array_cleaned, '},  {')) AS item_list
+        UNNEST(regexp_split_to_array(en.name_array_cleaned, '}, {')) AS item_list
     FROM expanded_names en
 )
 ,extracted_items AS (

@@ -41,7 +41,7 @@ split_items AS (
         vat_rate,
         record_valid_from,
         record_valid_to,
-        UNNEST(regexp_split_to_array(en.name_array_cleaned, '},  {')) AS item_list
+        UNNEST(regexp_split_to_array(en.name_array_cleaned, '}, {')) AS item_list
     FROM expanded_names en
 )
 ,extracted_items AS (
@@ -58,7 +58,7 @@ split_items AS (
         vat_rate,
         record_valid_from,
         record_valid_to,
-        CAST(regexp_extract(si.item_list, '"lang":\s*(\d+)', 1) AS VARCHAR) AS lang,
+        CAST(regexp_extract(si.item_list, '"lang":\s*"([^"]+)"', 1) AS VARCHAR) AS lang,
         CAST(regexp_extract(si.item_list, '"value":\s*"([^"]+)"', 1) AS VARCHAR) AS product_name
     FROM split_items si
 ),

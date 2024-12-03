@@ -36,20 +36,6 @@ WITH expanded_payload AS (
         END AS product_base_price_ex_vat,
         REPLACE(JSON_EXTRACT(PAYLOAD, '$.time_item_created_in_source_utc'), 'null', NULL)::TIMESTAMP AS time_item_created_in_source_utc
     FROM {{ ref('raw_wolt_snack_store_item_logs') }}
--- ),
--- unnested_names AS (
---     SELECT 
---         pd.*,
---         name.value AS name_entry
---     FROM expanded_payload pd,
---          UNNEST(pd.name_array) AS name(value)
--- ),
--- extracted_fields AS (
---     SELECT 
---         unnested_names.*,
---         JSON_EXTRACT_STRING(name_entry, '$.lang') AS lang,
---         JSON_EXTRACT_STRING(name_entry, '$.value') AS product_name
---     FROM unnested_names
 ),
 ranked_items AS (
     SELECT
