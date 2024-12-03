@@ -42,6 +42,8 @@ extracted_items AS (
         li.item_key,
         li.product_name,
         li.currency,
+        li.brand_name,
+        li.item_category,
         li.product_base_price AS product_price,
         li.product_base_price_ex_vat AS product_price_ex_vat,
         li.weight_in_grams
@@ -71,6 +73,8 @@ order_items AS (
         vi.product_price,
         vi.product_price_ex_vat,
         vi.weight_in_grams,
+        vi.brand_name,
+        vi.item_category,
         CASE
             WHEN eo.order_timestamp BETWEEN p.promo_start_date AND p.promo_end_date THEN TRUE
             ELSE FALSE
@@ -92,6 +96,8 @@ SELECT DISTINCT
     order_date,
     order_timestamp,
     product_name,
+    brand_name,
+    item_category,
     currency,
     product_price,
     product_price_ex_vat,

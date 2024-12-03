@@ -242,6 +242,10 @@ models:
       - name: order_timestamp
         data_type: TIMESTAMP    
       - name: product_name
+        data_type: VARCHAR  
+      - name: brand_name
+        data_type: VARCHAR
+      - name: item_category
         data_type: VARCHAR
       - name: currency
         data_type: VARCHAR  
