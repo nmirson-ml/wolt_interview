@@ -1,9 +1,8 @@
 {{
     config(
-        materialized = 'incremental',
+        materialized = 'table',
         schema = 'staging',
-        unique_key = ['log_item_id'],
-        on_schema_change = 'fail'
+        unique_key = ['log_item_id']
     )
 }}
 WITH expanded_payload AS (
@@ -70,7 +69,7 @@ SELECT
     item_key,
     brand_name,
     item_category,
-    name_array,
+    CAST(name_array AS VARCHAR) AS name_array,
     number_of_units,
     weight_in_grams,
     currency,
@@ -80,9 +79,9 @@ SELECT
     time_log_created_utc AS record_valid_from,
     record_valid_to
 FROM ranked_items
-WHERE row_number = 1
-  OR NOT EXISTS (
-      SELECT 1
-      FROM {{ this }}
-      WHERE {{ this }}.log_item_id = ranked_items.log_item_id
-  )
+-- WHERE row_number = 1
+--   OR NOT EXISTS (
+--       SELECT 1
+--       FROM {{ this }}
+--       WHERE {{ this }}.log_item_id = ranked_items.log_item_id
+--   )

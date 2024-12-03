@@ -6,32 +6,37 @@
         on_schema_change = 'fail'
     )
 }}
+
 WITH expanded_orders AS (
     SELECT
         pl.customer_key AS customer_id,
         pl.purchase_key AS order_id,
         pl.time_order_received_utc AS order_timestamp,
         CAST(pl.time_order_received_utc AS DATE) AS order_date,
-        JSON_EXTRACT(pl.basket_items, '$.item_key[*]') AS item_array
+        TRIM('[]' FROM REPLACE(pl.basket_items, '\n', '')) AS basket_items_cleaned
     FROM {{ ref('staging_purchase_logs') }} pl
 ),
-unnested_items AS (
-    SELECT
-        eo.*,
-        item.value AS item_list
-    FROM expanded_orders eo,
-         UNNEST(eo.item_array) AS item(value)
-),
-
+split_items AS (
+SELECT 
+eo.customer_id, 
+eo.order_id,
+eo.order_timestamp,
+eo.order_date,
+UNNEST(regexp_split_to_array(eo.basket_items_cleaned, '},  {')) AS item_list
+FROM expanded_orders eo
+)
+,
 extracted_items AS (
     SELECT
-        eo.*,
-        CAST(JSON_EXTRACT_STRING(item_list, '$.item_key') AS VARCHAR) AS item_key,
-        CAST(JSON_EXTRACT_STRING(item_list, '$.item_count') AS INTEGER) AS item_count
-    FROM unnested_items eo
-),
+        si.customer_id,
+        si.order_id, 
+        si.order_timestamp,
+        si.order_date,
+        CAST(regexp_extract(si.item_list, '"item_count":\s*(\d+)', 1) AS INTEGER) AS item_count,
+        CAST(regexp_extract(si.item_list, '"item_key":\s*"([^"]+)"', 1) AS VARCHAR) AS item_key
+    FROM split_items si)
 
-valid_items AS (
+,valid_items AS (
     SELECT
         -- li.log_item_id AS item_id,
         li.item_key,

@@ -46,6 +46,9 @@ models:
         data_type: TIMESTAMP WITH TIME ZONE
 
   - name: staging_item_logs
+    config:
+      contract:
+        enforced: true
     columns:
       - name: log_item_id
         data_type: VARCHAR
