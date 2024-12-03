@@ -55,12 +55,8 @@ models:
         data_type: VARCHAR
       - name: item_category
         data_type: VARCHAR
-      - name: lang
+      - name: name_entry
         data_type: VARCHAR
-        description: "Language code for the product name"
-      - name: product_name
-        data_type: VARCHAR
-        description: "Product name in the specified language"
       - name: number_of_units
         data_type: INTEGER
       - name: weight_in_grams

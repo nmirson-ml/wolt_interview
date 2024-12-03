@@ -11,6 +11,20 @@ WITH latest_items AS (
     FROM {{ ref('staging_item_logs') }}
     WHERE record_valid_to IS NULL
 ),
+unnested_names AS (
+    SELECT 
+        li.*,
+        name.value AS name_entry
+    FROM latest_items li,
+         UNNEST(li.name_array) AS name(value)
+),
+extracted_fields AS (
+    SELECT 
+        unnested_names.*,
+        JSON_EXTRACT_STRING(name_entry, '$.lang') AS lang,
+        JSON_EXTRACT_STRING(name_entry, '$.value') AS product_name
+    FROM unnested_names
+),
 prioritized_names AS (
     SELECT 
         item_key,
@@ -27,7 +41,7 @@ prioritized_names AS (
         product_base_price_ex_vat,
         vat_rate,
         record_valid_from
-    FROM latest_items
+    FROM extracted_fields
 )
 SELECT DISTINCT
     item_key,

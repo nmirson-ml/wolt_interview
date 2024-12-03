@@ -37,41 +37,40 @@ WITH expanded_payload AS (
         END AS product_base_price_ex_vat,
         REPLACE(JSON_EXTRACT(PAYLOAD, '$.time_item_created_in_source_utc'), 'null', NULL)::TIMESTAMP AS time_item_created_in_source_utc
     FROM {{ ref('raw_wolt_snack_store_item_logs') }}
-),
-unnested_names AS (
-    SELECT 
-        pd.*,
-        name.value AS name_entry
-    FROM expanded_payload pd,
-         UNNEST(pd.name_array) AS name(value)
-),
-extracted_fields AS (
-    SELECT 
-        unnested_names.*,
-        JSON_EXTRACT_STRING(name_entry, '$.lang') AS lang,
-        JSON_EXTRACT_STRING(name_entry, '$.value') AS product_name
-    FROM unnested_names
+-- ),
+-- unnested_names AS (
+--     SELECT 
+--         pd.*,
+--         name.value AS name_entry
+--     FROM expanded_payload pd,
+--          UNNEST(pd.name_array) AS name(value)
+-- ),
+-- extracted_fields AS (
+--     SELECT 
+--         unnested_names.*,
+--         JSON_EXTRACT_STRING(name_entry, '$.lang') AS lang,
+--         JSON_EXTRACT_STRING(name_entry, '$.value') AS product_name
+--     FROM unnested_names
 ),
 ranked_items AS (
     SELECT
         *,
         ROW_NUMBER() OVER (
-            PARTITION BY item_key, lang
+            PARTITION BY item_key
             ORDER BY time_log_created_utc
         ) AS row_number,
         LEAD(time_log_created_utc) OVER (
-            PARTITION BY item_key, lang
+            PARTITION BY item_key
             ORDER BY time_log_created_utc
         ) AS record_valid_to
-    FROM extracted_fields
+    FROM expanded_payload
 )
 SELECT
     log_item_id,
     item_key,
     brand_name,
     item_category,
-    lang,
-    product_name,
+    name_array,
     number_of_units,
     weight_in_grams,
     currency,

@@ -6,9 +6,25 @@
         on_schema_change = 'fail'
     )
 }}
-
-
-WITH prioritized_names AS (
+WITH latest_items AS (
+    SELECT *
+    FROM {{ ref('staging_item_logs') }}
+),
+unnested_names AS (
+    SELECT 
+        li.*,
+        name.value AS name_entry
+    FROM latest_items li,
+         UNNEST(li.name_array) AS name(value)
+),
+extracted_fields AS (
+    SELECT 
+        unnested_names.*,
+        JSON_EXTRACT_STRING(name_entry, '$.lang') AS lang,
+        JSON_EXTRACT_STRING(name_entry, '$.value') AS product_name
+    FROM unnested_names
+),
+prioritized_names AS (
     SELECT 
         log_item_id,
         item_key,
@@ -28,7 +44,7 @@ WITH prioritized_names AS (
         vat_rate,
         record_valid_from,
         record_valid_to
-    FROM {{ ref('staging_item_logs') }}
+    FROM extracted_fields
 )
 SELECT DISTINCT
     log_item_id,
