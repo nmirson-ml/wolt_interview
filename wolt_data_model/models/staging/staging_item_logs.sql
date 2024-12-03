@@ -79,6 +79,7 @@ SELECT
     time_log_created_utc AS record_valid_from,
     record_valid_to
 FROM ranked_items
+WHERE product_base_price IS NOT NULL
 -- WHERE row_number = 1
 --   OR NOT EXISTS (
 --       SELECT 1

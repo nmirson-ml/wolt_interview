@@ -55,7 +55,7 @@ split_items AS (
         product_base_price_ex_vat,
         vat_rate,
         record_valid_from,
-        CAST(regexp_extract(si.item_list, '"lang":\s*(\d+)', 1) AS VARCHAR) AS lang,
+        CAST(regexp_extract(si.item_list, '"lang":\s*"([^"]+)"', 1) AS VARCHAR) AS lang,
         CAST(regexp_extract(si.item_list, '"value":\s*"([^"]+)"', 1) AS VARCHAR) AS product_name
     FROM split_items si
 ),
@@ -66,7 +66,12 @@ prioritized_names AS (
         item_category,
         FIRST_VALUE(product_name) OVER (
             PARTITION BY item_key
-            ORDER BY CASE WHEN lang = 'en' THEN 0 ELSE 1 END
+            ORDER BY 
+                CASE 
+                    WHEN lang = 'en' THEN 0 
+                    WHEN lang IS NOT NULL THEN 1 
+                    ELSE 2 
+                END
         ) AS product_name,
         number_of_units,
         weight_in_grams,
