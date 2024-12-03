@@ -80,16 +80,18 @@ models:
       contract:
         enforced: true
     columns:
-      - name: customer_key
+      - name: customer_id
         data_type: VARCHAR
         constraints:
           - type: primary_key
-      - name: first_purchase_date
+      - name: first_order_date
         data_type: DATE
-      - name: total_purchases
+      - name: total_orders
         data_type: BIGINT
       - name: is_repeat_customer
         data_type: BOOLEAN
+      - name: total_spent
+        data_type: DECIMAL(38,2)
 
   - name: dim_items_scd
     config:
@@ -124,7 +126,6 @@ models:
       - name: record_valid_to
         data_type: TIMESTAMP
 
-
   - name: dim_items
     config:
       contract:
@@ -153,7 +154,6 @@ models:
         data_type: DECIMAL(10,2)
       - name: record_valid_from
         data_type: TIMESTAMP
-
 
   - name: dim_time
     config:
@@ -191,6 +191,66 @@ models:
       - name: promo_type
         data_type: VARCHAR
       - name: discount_in_percentage
+        data_type: INTEGER
+      - name: loaded_timestamp
+        data_type: TIMESTAMP WITH TIME ZONE
+
+  - name: fact_order
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: order_id
+        data_type: VARCHAR
+        constraints:
+          - type: primary_key 
+      - name: customer_id
+        data_type: VARCHAR
+      - name: order_date
+        data_type: DATE
+      - name: order_timestamp
+        data_type: TIMESTAMP
+      - name: delivery_distance_line_meters
+        data_type: INTEGER
+      - name: wolt_service_fee
+        data_type: DECIMAL(10,2)
+      - name: courier_base_fee
+        data_type: DECIMAL(10,2)
+      - name: total_basket_value
+        data_type: DECIMAL(10,2)
+      - name: loaded_timestamp
+        data_type: TIMESTAMP WITH TIME ZONE
+
+  - name: fact_order_item
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: customer_id
+        data_type: VARCHAR  
+      - name: order_id
+        data_type: VARCHAR
+      - name: order_item_id
+        data_type: VARCHAR
+      - name: item_id
+        data_type: VARCHAR
+      - name: order_date
+        data_type: DATE
+      - name: order_timestamp
+        data_type: TIMESTAMP    
+      - name: product_name
+        data_type: VARCHAR
+      - name: currency
+        data_type: VARCHAR  
+      - name: product_price
+        data_type: DECIMAL(10,4) 
+      - name: product_price_ex_vat
+        data_type: DOUBLE  
+      - name: weight_in_grams
+        data_type: INTEGER
+      - name: had_promotion
+        data_type: BOOLEAN
+      - name: discount
         data_type: INTEGER
       - name: loaded_timestamp
         data_type: TIMESTAMP WITH TIME ZONE
