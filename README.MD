@@ -7,8 +7,8 @@ Which is based on the following project.
 - [Portable Data Stack with SQLMesh](https://github.com/cnstlungu/portable-data-stack-sqlmesh) 
 
 # Data model
-
-![Data Model](resources/data_model.png) 
+ 
+![Data Model](resources/model_diagram.png "Data Model")
 
 ## Layers
 
