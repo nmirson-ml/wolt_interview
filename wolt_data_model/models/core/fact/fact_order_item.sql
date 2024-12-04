@@ -159,6 +159,7 @@ WHERE json_9 IS NOT NULL
 ,
 promotions AS (
     SELECT
+        dp.promo_id,
         dp.item_key,
         dp.promo_start_date,
         dp.promo_end_date,
@@ -184,6 +185,7 @@ order_items AS (
             WHEN vi.order_timestamp BETWEEN p.promo_start_date AND p.promo_end_date THEN TRUE
             ELSE FALSE
         END AS had_promotion,
+        p.promo_id,
         CASE
             WHEN vi.order_timestamp BETWEEN p.promo_start_date AND p.promo_end_date THEN p.discount_in_percentage
             ELSE 0
@@ -207,6 +209,7 @@ SELECT DISTINCT
     product_price_ex_vat,
     weight_in_grams,
     had_promotion,
+    promo_id,
     discount,
     CURRENT_TIMESTAMP AS loaded_timestamp
 FROM order_items

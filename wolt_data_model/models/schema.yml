@@ -257,6 +257,8 @@ models:
         data_type: INTEGER
       - name: had_promotion
         data_type: BOOLEAN
+      - name: promo_id
+        data_type: VARCHAR
       - name: discount
         data_type: INTEGER
       - name: loaded_timestamp
