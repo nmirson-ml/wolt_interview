@@ -14,4 +14,4 @@ SELECT
     promo_type,
     discount_in_percentage,
     CURRENT_TIMESTAMP AS loaded_timestamp
-FROM {{ ref('staging_promos') }}
+FROM {{ ref('staging_promotions') }}
