@@ -247,6 +247,8 @@ models:
         data_type: VARCHAR
       - name: item_category
         data_type: VARCHAR
+      - name: item_count
+        data_type: INTEGER
       - name: currency
         data_type: VARCHAR  
       - name: product_price
