@@ -38,6 +38,29 @@ This model is going to be loaded using SQLMesh with DuckDB
 - raw_promotions
 
 
+
+*Dimensions*
+- dim_customers - Master table of customer information and attributes
+- dim_items - Current state of product/item catalog
+- dim_items_scd - Historical changes to items over time (Slowly Changing Dimension)
+- dim_promotions - Lookup table for all promotional campaigns and discounts
+- dim_time - Calendar dimension for date-based analysis
+
+*Facts*:
+- fact_order_item - Individual line items within orders (one row per item in an order)
+- fact_order - Header-level order information (one row per order)
+
+*Staging*:
+- staging_item_logs - Intermediate table for processing item catalog changes
+- staging_purchase_logs - Intermediate table for processing raw order data
+- staging_promotions - Intermediate table for processing promotional data
+
+*Raw*:
+- raw_item_logs - Raw incoming data about item catalog changes
+- raw_purchase_logs - Raw incoming data about customer purchases
+- raw_promotions - Raw incoming data about promotions
+
+
 ## Source Data
 The project uses the following seed data:
 
