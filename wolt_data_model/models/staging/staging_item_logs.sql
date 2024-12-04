@@ -74,13 +74,12 @@ SELECT
     number_of_units,
     weight_in_grams,
     currency,
-    product_base_price,
-    product_base_price_ex_vat,
+    COALESCE(product_base_price,LAG(product_base_price) OVER (PARTITION BY item_key ORDER BY time_log_created_utc)) AS product_base_price,
+    COALESCE(product_base_price_ex_vat,LAG(product_base_price_ex_vat) OVER (PARTITION BY item_key ORDER BY time_log_created_utc)) AS product_base_price_ex_vat,
     vat_rate,
     time_log_created_utc AS record_valid_from,
     record_valid_to
 FROM opened_names
-WHERE product_base_price IS NOT NULL
 {% if is_incremental() %}
     AND record_valid_from > (SELECT MAX(record_valid_from) FROM {{ this }})
 {% endif %}
