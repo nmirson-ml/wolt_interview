@@ -58,7 +58,7 @@ models:
         data_type: VARCHAR
       - name: item_category
         data_type: VARCHAR
-      - name: name_array
+      - name: product_name
         data_type: VARCHAR
       - name: number_of_units
         data_type: INTEGER

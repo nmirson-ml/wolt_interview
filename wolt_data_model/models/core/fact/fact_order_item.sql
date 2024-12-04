@@ -25,15 +25,15 @@ split_basket AS (
   order_timestamp,
   order_date,
   array_size,
-        json_extract(basket_items, '$[0]') AS json_1,
-        json_extract(basket_items, '$[1]') AS json_2,
-        json_extract(basket_items, '$[2]') AS json_3,
-        json_extract(basket_items, '$[3]') AS json_4,
-        json_extract(basket_items, '$[4]') AS json_5,
-        json_extract(basket_items, '$[5]') AS json_6,
-        json_extract(basket_items, '$[6]') AS json_7,
-        json_extract(basket_items, '$[7]') AS json_8,
-        json_extract(basket_items, '$[8]') AS json_9
+        json_extract(basket_items, '$[0]') AS basket_json_1,
+        json_extract(basket_items, '$[1]') AS basket_json_2,
+        json_extract(basket_items, '$[2]') AS basket_json_3,
+        json_extract(basket_items, '$[3]') AS basket_json_4,
+        json_extract(basket_items, '$[4]') AS basket_json_5,
+        json_extract(basket_items, '$[5]') AS basket_json_6,
+        json_extract(basket_items, '$[6]') AS basket_json_7,
+        json_extract(basket_items, '$[7]') AS basket_json_8,
+        json_extract(basket_items, '$[8]') AS basket_json_9
     FROM parsed_basket_items
 ),
   extracted_items AS( 
@@ -43,98 +43,98 @@ split_basket AS (
   basket_items,
   order_timestamp,
   order_date,
-  REPLACE(CAST(json_extract(json_1, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-  CAST(json_extract(json_1, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_1, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_1, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_1 IS NOT NULL
+WHERE basket_json_1 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_2, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_2, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_2, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_2, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_2 IS NOT NULL
+WHERE basket_json_2 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_3, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_3, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_3, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_3, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_3 IS NOT NULL
+WHERE basket_json_3 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_4, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_4, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_4, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_4, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_4 IS NOT NULL
+WHERE basket_json_4 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_5, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_5, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_5, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_5, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_5 IS NOT NULL
+WHERE basket_json_5 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_6, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_6, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_6, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_6, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_6 IS NOT NULL
+WHERE basket_json_6 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_7, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_7, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_7, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_7, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_7 IS NOT NULL
+WHERE basket_json_7 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_8, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_8, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_8, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_8, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_8 IS NOT NULL
+WHERE basket_json_8 IS NOT NULL
 UNION ALL
 SELECT 
-     customer_id,
+  customer_id,
   order_id,
   basket_items,
   order_timestamp,
   order_date,
-    REPLACE(CAST(json_extract(json_9, '$.item_key') AS VARCHAR), '"', '') AS item_key,
-    CAST(json_extract(json_9, '$.item_count') AS INTEGER) AS item_count
+  REPLACE(CAST(json_extract(basket_json_9, '$.item_key') AS VARCHAR), '"', '') AS item_key,
+  CAST(json_extract(basket_json_9, '$.item_count') AS INTEGER) AS item_count
 FROM split_basket
-WHERE json_9 IS NOT NULL
+WHERE basket_json_9 IS NOT NULL
 )
 ,valid_items AS (
     SELECT
