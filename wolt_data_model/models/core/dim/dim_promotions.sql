@@ -1,9 +1,9 @@
 {{
-config(
-materialized = 'table',
-unique_key = 'promo_id',
-schema = 'core'
-)
+    config(
+        materialized = 'table',
+        unique_key = 'promo_id',
+        schema = 'core'
+    )
 }}
 
 SELECT

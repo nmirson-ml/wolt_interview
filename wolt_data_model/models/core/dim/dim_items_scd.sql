@@ -1,9 +1,8 @@
 {{
     config(
-        materialized = 'incremental',
+        materialized = 'table',
         schema = 'core',
-        unique_key = ['log_item_id'],
-        on_schema_change = 'fail'
+        unique_key = ['log_item_id']
     )
 }}
 WITH latest_items AS (

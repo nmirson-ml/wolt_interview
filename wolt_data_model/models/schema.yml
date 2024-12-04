@@ -261,3 +261,4 @@ models:
         data_type: INTEGER
       - name: loaded_timestamp
         data_type: TIMESTAMP WITH TIME ZONE
+

@@ -6,4 +6,5 @@ wolt_data_model:
     local:
       type: duckdb
       path: "{{ env_var('DUCKDB_FILE_PATH') }}"
+      threads: 1
       schema: wolt_data_model
