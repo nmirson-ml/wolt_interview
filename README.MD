@@ -1,10 +1,9 @@
 # Wolt Snack Store Interview - Data Modelling 
 
 
-This model is going to be loaded using SQLMesh portable data stack project:
+This model is going to be loaded using SQLMesh with DuckDB
+- [Portable data stack project](https://github.com/nmirson-ml/datamesh_portable_analytics_wolt):
 
-Which is based on the following project. 
-- [Portable Data Stack with SQLMesh](https://github.com/cnstlungu/portable-data-stack-sqlmesh) 
 
 # Data model
  
@@ -20,12 +19,13 @@ Which is based on the following project.
 #### Dimensions
 - dim_customers
 - dim_items
+- dim_items_scd
 - dim_promotions
 - dim_time
 
 #### Facts
-- fact_purchases
-- fact_item_sales
+- fact_order_item
+- fact_order
 
 ### Staging
 - staging_item_logs
@@ -113,3 +113,5 @@ If Mac, use `cat .env >> .venv/bin/activate`
 6. Run `dbt run` to run the models
 
 7. Run `dbt test` to run the tests
+
+
