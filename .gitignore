@@ -13,3 +13,5 @@ __pycache__/
 *.parquet
 *.wal
 .gitignore
+python_database_test.py
+python_test.py
