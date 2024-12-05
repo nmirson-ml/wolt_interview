@@ -30,8 +30,12 @@ models:
     columns:
       - name: log_item_id
         data_type: VARCHAR
+        tests:
+          - not_null
       - name: item_key
         data_type: VARCHAR
+        tests:
+          - not_null
       - name: brand_name
         data_type: VARCHAR
       - name: item_category
@@ -53,6 +57,8 @@ models:
         data_type: DECIMAL(10,2)
       - name: record_valid_from
         data_type: TIMESTAMP
+        tests:
+          - not_null
       - name: record_valid_to
         data_type: TIMESTAMP
 
@@ -142,10 +148,16 @@ models:
           - unique
       - name: customer_id
         data_type: VARCHAR
+        tests:
+          - not_null
       - name: order_date
         data_type: DATE
+        tests:
+          - not_null
       - name: order_timestamp
         data_type: TIMESTAMP
+        tests:
+          - not_null
       - name: delivery_distance_line_meters
         data_type: INTEGER
       - name: wolt_service_fee
@@ -164,8 +176,12 @@ models:
     columns:
       - name: customer_id
         data_type: VARCHAR  
+        tests:
+          - not_null
       - name: order_id
         data_type: VARCHAR
+        tests:
+          - not_null
       - name: order_item_id
         data_type: VARCHAR
         tests:
@@ -173,10 +189,16 @@ models:
           - unique
       - name: item_id
         data_type: VARCHAR
+        tests:
+          - not_null
       - name: order_date
         data_type: DATE
+        tests:
+          - not_null
       - name: order_timestamp
         data_type: TIMESTAMP    
+        tests:
+          - not_null
       - name: product_name
         data_type: VARCHAR  
       - name: brand_name

@@ -184,12 +184,15 @@ order_items AS (
         vi.brand_name,
         vi.item_category,
         CASE
-            WHEN vi.order_timestamp BETWEEN p.promo_start_date AND p.promo_end_date THEN TRUE
+            WHEN vi.order_date BETWEEN p.promo_start_date AND p.promo_end_date THEN TRUE
             ELSE FALSE
         END AS had_promotion,
-        p.promo_id,
         CASE
-            WHEN vi.order_timestamp BETWEEN p.promo_start_date AND p.promo_end_date THEN p.discount_in_percentage
+            WHEN vi.order_date BETWEEN p.promo_start_date AND p.promo_end_date THEN p.promo_id
+            ELSE NULL
+        END AS promotion_id,
+        CASE
+            WHEN vi.order_date BETWEEN p.promo_start_date AND p.promo_end_date THEN p.discount_in_percentage
             ELSE 0
         END AS discount
     FROM valid_items vi
@@ -212,7 +215,7 @@ SELECT DISTINCT
     product_price_ex_vat,
     weight_in_grams,
     had_promotion,
-    promo_id,
+    promotion_id AS promo_id,
     discount,
     CURRENT_TIMESTAMP AS loaded_timestamp
 FROM order_items
