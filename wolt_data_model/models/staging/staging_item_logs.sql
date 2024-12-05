@@ -81,5 +81,5 @@ SELECT
     record_valid_to
 FROM opened_names
 {% if is_incremental() %}
-    AND record_valid_from > (SELECT MAX(record_valid_from) FROM {{ this }})
+WHERE record_valid_from > (SELECT MAX(record_valid_from) FROM {{ this }})
 {% endif %}

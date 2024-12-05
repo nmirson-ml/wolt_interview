@@ -1,82 +1,6 @@
 version: 2
 
 models:
-  # Staging Models
-  - name: staging_purchase_logs
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: time_order_received_utc
-        data_type: TIMESTAMP
-      - name: purchase_key
-        data_type: VARCHAR
-      - name: customer_key
-        data_type: VARCHAR
-      - name: delivery_distance_line_meters
-        data_type: INTEGER
-      - name: wolt_service_fee
-        data_type: DECIMAL(10,2)
-      - name: courier_base_fee
-        data_type: DECIMAL(10,2)
-      - name: total_basket_value
-        data_type: DECIMAL(10,2)
-      - name: basket_items
-        data_type: VARCHAR
-      - name: loaded_timestamp
-        data_type: TIMESTAMP WITH TIME ZONE
-
-      
-  - name: staging_promotions
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: promo_start_date
-        data_type: DATE
-      - name: promo_end_date
-        data_type: DATE
-      - name: item_key
-        data_type: VARCHAR
-      - name: promo_type
-        data_type: VARCHAR
-      - name: discount_in_percentage
-        data_type: INTEGER
-      - name: loaded_timestamp
-        data_type: TIMESTAMP WITH TIME ZONE
-
-  - name: staging_item_logs
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: log_item_id
-        data_type: VARCHAR
-      - name: item_key
-        data_type: VARCHAR
-      - name: brand_name
-        data_type: VARCHAR
-      - name: item_category
-        data_type: VARCHAR
-      - name: product_name
-        data_type: VARCHAR
-      - name: number_of_units
-        data_type: INTEGER
-      - name: weight_in_grams
-        data_type: INTEGER
-      - name: currency
-        data_type: VARCHAR
-      - name: product_base_price
-        data_type: DECIMAL(10,4)
-      - name: product_base_price_ex_vat
-        data_type: DOUBLE
-      - name: vat_rate
-        data_type: DECIMAL(10,2)
-      - name: record_valid_from
-        data_type: TIMESTAMP
-      - name: record_valid_to
-        data_type: TIMESTAMP
-
   # Dimension Tables
   - name: dim_customer
     config:
@@ -87,6 +11,9 @@ models:
         data_type: VARCHAR
         constraints:
           - type: primary_key
+        tests:
+          - not_null
+          - unique
       - name: first_order_date
         data_type: DATE
       - name: total_orders
@@ -185,6 +112,9 @@ models:
         data_type: VARCHAR
         constraints:
           - type: primary_key
+        tests:
+          - not_null
+          - unique
       - name: promo_start_date
         data_type: DATE
       - name: promo_end_date
@@ -207,6 +137,9 @@ models:
         data_type: VARCHAR
         constraints:
           - type: primary_key 
+        tests:
+          - not_null
+          - unique
       - name: customer_id
         data_type: VARCHAR
       - name: order_date
@@ -235,6 +168,9 @@ models:
         data_type: VARCHAR
       - name: order_item_id
         data_type: VARCHAR
+        tests:
+          - not_null
+          - unique
       - name: item_id
         data_type: VARCHAR
       - name: order_date
@@ -265,4 +201,80 @@ models:
         data_type: INTEGER
       - name: loaded_timestamp
         data_type: TIMESTAMP WITH TIME ZONE
+
+ # Staging Models
+  - name: staging_purchase_logs
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: time_order_received_utc
+        data_type: TIMESTAMP
+      - name: purchase_key
+        data_type: VARCHAR
+      - name: customer_key
+        data_type: VARCHAR
+      - name: delivery_distance_line_meters
+        data_type: INTEGER
+      - name: wolt_service_fee
+        data_type: DECIMAL(10,2)
+      - name: courier_base_fee
+        data_type: DECIMAL(10,2)
+      - name: total_basket_value
+        data_type: DECIMAL(10,2)
+      - name: basket_items
+        data_type: VARCHAR
+      - name: loaded_timestamp
+        data_type: TIMESTAMP WITH TIME ZONE
+
+      
+  - name: staging_promotions
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: promo_start_date
+        data_type: DATE
+      - name: promo_end_date
+        data_type: DATE
+      - name: item_key
+        data_type: VARCHAR
+      - name: promo_type
+        data_type: VARCHAR
+      - name: discount_in_percentage
+        data_type: INTEGER
+      - name: loaded_timestamp
+        data_type: TIMESTAMP WITH TIME ZONE
+
+  - name: staging_item_logs
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: log_item_id
+        data_type: VARCHAR
+      - name: item_key
+        data_type: VARCHAR
+      - name: brand_name
+        data_type: VARCHAR
+      - name: item_category
+        data_type: VARCHAR
+      - name: product_name
+        data_type: VARCHAR
+      - name: number_of_units
+        data_type: INTEGER
+      - name: weight_in_grams
+        data_type: INTEGER
+      - name: currency
+        data_type: VARCHAR
+      - name: product_base_price
+        data_type: DECIMAL(10,4)
+      - name: product_base_price_ex_vat
+        data_type: DOUBLE
+      - name: vat_rate
+        data_type: DECIMAL(10,2)
+      - name: record_valid_from
+        data_type: TIMESTAMP
+      - name: record_valid_to
+        data_type: TIMESTAMP
 

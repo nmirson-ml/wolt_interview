@@ -27,5 +27,5 @@ SELECT
     CURRENT_TIMESTAMP AS loaded_timestamp
 FROM expanded_basket
 {% if is_incremental() %}
-    AND time_order_received_utc > (SELECT MAX(time_order_received_utc) FROM {{ this }})
+WHERE time_order_received_utc > (SELECT MAX(time_order_received_utc) FROM {{ this }})
 {% endif %}

@@ -26,5 +26,5 @@ SELECT DISTINCT
     record_valid_to
 FROM all_items
 {% if is_incremental() %}
-    AND record_valid_from > (SELECT MAX(record_valid_from) FROM {{ this }})
+WHERE record_valid_from > (SELECT MAX(record_valid_from) FROM {{ this }})
 {% endif %}
