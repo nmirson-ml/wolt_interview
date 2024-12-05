@@ -197,6 +197,7 @@ order_items AS (
         END AS discount
     FROM valid_items vi
     LEFT JOIN promotions p ON CAST(vi.item_key AS VARCHAR) = CAST(p.item_key AS VARCHAR)
+    AND vi.order_date BETWEEN p.promo_start_date AND p.promo_end_date
 )
 
 SELECT DISTINCT
