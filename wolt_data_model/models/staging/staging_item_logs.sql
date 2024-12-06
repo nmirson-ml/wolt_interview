@@ -51,6 +51,7 @@ names_opened AS (
         json_extract(name_array, '$[0]') AS name_json_1,
         json_extract(name_array, '$[1]') AS name_json_2
     FROM ranked_items
+    WHERE time_log_created_utc < record_valid_to
 ),
 opened_names AS (
     SELECT 
