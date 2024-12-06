@@ -32,6 +32,7 @@ models:
         data_type: VARCHAR
         tests:
           - not_null
+          - unique
       - name: item_key
         data_type: VARCHAR
         tests:

@@ -60,7 +60,22 @@ opened_names AS (
         json_extract_string(name_json_2, '$.lang') AS lang2,
         json_extract_string(name_json_2, '$.value') AS name2
     FROM names_opened
+),
+non_null_prices AS (
+    SELECT
+        *,
+        LAG(product_base_price) OVER (
+            PARTITION BY item_key
+            ORDER BY time_log_created_utc
+        ) AS previous_product_base_price,
+        LAG(product_base_price_ex_vat) OVER (
+            PARTITION BY item_key
+            ORDER BY time_log_created_utc
+        ) AS previous_product_base_price_ex_vat
+    FROM opened_names
+    WHERE product_base_price IS NOT NULL OR product_base_price_ex_vat IS NOT NULL -- fallback to previous non-null price
 )
+
 SELECT
     log_item_id,
     item_key,
@@ -74,12 +89,12 @@ SELECT
     number_of_units,
     weight_in_grams,
     currency,
-    COALESCE(product_base_price,LAG(product_base_price) OVER (PARTITION BY item_key ORDER BY time_log_created_utc)) AS product_base_price,
-    COALESCE(product_base_price_ex_vat,LAG(product_base_price_ex_vat) OVER (PARTITION BY item_key ORDER BY time_log_created_utc)) AS product_base_price_ex_vat,
+    COALESCE(product_base_price, previous_product_base_price) AS product_base_price, -- fallback to previous price if current price is null
+    COALESCE(product_base_price_ex_vat, previous_product_base_price_ex_vat) AS product_base_price_ex_vat, -- fallback to previous price if current price is null
     vat_rate,
     time_log_created_utc AS record_valid_from,
     record_valid_to
-FROM opened_names
+FROM  non_null_prices
 {% if is_incremental() %}
 WHERE record_valid_from > (SELECT MAX(record_valid_from) FROM {{ this }})
 {% endif %}

@@ -6,8 +6,9 @@ where
     or product_base_price > 1000
     -- -- Price ex VAT higher than price with VAT
     or product_base_price_ex_vat >= product_base_price
-    -- -- Zero prices (might be free items, gift with purchase or something similar)
+    -- -- Zero prices or null prices (might be free items, gift with purchase or something similar)
     or product_base_price = 0
+    or product_base_price IS NULL
     -- -- Test for invalid currency codes
     or currency NOT LIKE  '" EUR"'
     -- -- Negative weights
