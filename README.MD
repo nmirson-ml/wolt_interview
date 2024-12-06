@@ -11,9 +11,10 @@ This model is going to be loaded using SQLMesh with DuckDB
 
 ## Layers
 
-- `raw` unrefined input data
-- `staging` staging area
 - `core` curated data
+- `staging` staging area
+- `raw` unrefined input data
+
 
 
 ### Core
@@ -22,7 +23,7 @@ This model is going to be loaded using SQLMesh with DuckDB
 - dim_items - Current state of product/item catalog
 - dim_items_scd - Historical changes to items over time (Slowly Changing Dimension)
 - dim_promotions - Lookup table for all promotional campaigns and discounts
-- dim_time - Calendar dimension for date-based analysis
+- dim_time - Calendar dimension for date-based analysis 
 
 *Facts*:
 - fact_order_item - Individual line items within orders (one row per item in an order)
@@ -38,6 +39,31 @@ This model is going to be loaded using SQLMesh with DuckDB
 - raw_item_logs - Raw incoming data about item catalog changes
 - raw_purchase_logs - Raw incoming data about customer purchases
 - raw_promotions - Raw incoming data about promotions
+
+
+## Testing
+The project includes several types of tests to ensure data quality and model integrity:
+
+### Data Quality Tests
+- Column presence validation
+- Data type checks 
+- Not-null constraints on key fields
+- Primary key uniqueness tests
+
+### Business Logic Tests
+- Fact table grain validation (e.g. one row per order in fact_order)
+- SCD type 2 versioning checks in dim_items_scd
+- Promotion date range validity
+- Order dates falling within valid item versions
+- Referential integrity between facts and dimensions
+
+### Value Tests
+- Valid ranges for numeric fields (e.g. positive prices and quantities)
+- Valid formats for identifiers
+- Acceptable values for categorical fields
+- Date range validations
+
+Tests are implemented using dbt's built-in testing framework and custom SQL tests. They run automatically as part of the build process to catch data quality issues early.
 
 
 ## Source Data
@@ -72,9 +98,13 @@ Records customer purchases:
 
 ## Setting up the project
 
-1. Rename `.env.example` to `.env`. This will contain relative paths for the database file (datamart.duckdb) and parquet input files
+1. Create `.env` file to set up environment variables
 
-2. Rename `shared\db\datamart.duckdb.example` to `shared\db\datamart.duckdb` or initiate an empty database there with the same name.
+`export DUCKDB_FILE_PATH='../shared/db/datamart.duckdb'`       
+
+2. Create a empty database with duckdb using the database_init.py script:
+
+`python database_init.py`
 
 3. Create a Python Virtual Environment
 
@@ -82,10 +112,7 @@ Records customer purchases:
 
 4. Add environment variables to the virtual environment
 
-`cat .env >> .venv/Scripts/activate`
-
-If Mac, use `cat .env >> .venv/bin/activate`
-
+`cat .env >> .venv/bin/activate`
 
 5. Activate the Python venv
 
@@ -117,3 +144,4 @@ If Mac, use `cat .env >> .venv/bin/activate`
 7. Run `dbt test` to run the tests
 
 
+This repository is forked from [Postcard Company Datamart](https://github.com/cnstlungu/postcard-company-datamart), to be able to use DuckDB local integration with DBT. 
