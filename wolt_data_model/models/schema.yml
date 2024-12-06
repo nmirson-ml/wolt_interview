@@ -11,9 +11,6 @@ models:
         data_type: VARCHAR
         constraints:
           - type: primary_key
-        tests:
-          - not_null
-          - unique
       - name: first_order_date
         data_type: DATE
       - name: total_orders
@@ -30,9 +27,8 @@ models:
     columns:
       - name: log_item_id
         data_type: VARCHAR
-        tests:
-          - not_null
-          - unique
+        constraints:
+          - type: primary_key
       - name: item_key
         data_type: VARCHAR
         tests:
@@ -70,6 +66,8 @@ models:
     columns:
       - name: item_key
         data_type: VARCHAR
+        constraints:
+          - type: primary_key
       - name: brand_name
         data_type: VARCHAR
       - name: item_category
@@ -119,9 +117,6 @@ models:
         data_type: VARCHAR
         constraints:
           - type: primary_key
-        tests:
-          - not_null
-          - unique
       - name: promo_start_date
         data_type: DATE
       - name: promo_end_date
@@ -144,9 +139,6 @@ models:
         data_type: VARCHAR
         constraints:
           - type: primary_key 
-        tests:
-          - not_null
-          - unique
       - name: customer_id
         data_type: VARCHAR
         tests:
@@ -185,9 +177,8 @@ models:
           - not_null
       - name: order_item_id
         data_type: VARCHAR
-        tests:
-          - not_null
-          - unique
+        constraints:
+          - type: primary_key
       - name: item_id
         data_type: VARCHAR
         tests:
