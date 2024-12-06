@@ -129,19 +129,13 @@ Records customer purchases:
 
 `source .venv/bin/activate`
 
-2. Make sure you are located in the directory  `wolt_data_model`
+2. Run `dbt deps` to install dependencies
 
-`cd wolt_data_model`
+3. Run `dbt seed` to import the seed (static) data
 
-3. Run `dbt deps` to install dependencies
+4. Run `dbt compile` to compile the project
 
-4. Run `dbt seed` to import the seed (static) data
+5. Run `dbt run` to run the models
 
-5. Run `dbt compile` to compile the project
+6. Run `dbt test` to run the tests
 
-6. Run `dbt run` to run the models
-
-7. Run `dbt test` to run the tests
-
-
-This repository is forked from [Postcard Company Datamart](https://github.com/cnstlungu/postcard-company-datamart), to be able to use DuckDB local integration with DBT. 
