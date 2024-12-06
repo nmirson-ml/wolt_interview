@@ -170,13 +170,13 @@ promotions AS (
 
 order_items AS (
     SELECT
-        vi.customer_id,
-        vi.order_id,
-        vi.item_key,
-        vi.order_date,
-        vi.order_timestamp,
-        vi.item_count,
-        vi.product_name,
+        ei.customer_id,
+        ei.order_id,
+        ei.item_key,
+        ei.order_date,
+        ei.order_timestamp,
+        ei.item_count,
+        vi.product_name, -- from valid_items, to check was in the database at that time. 
         vi.currency,
         vi.product_price,
         vi.product_price_ex_vat,
@@ -195,7 +195,8 @@ order_items AS (
             WHEN vi.order_date BETWEEN p.promo_start_date AND p.promo_end_date THEN p.discount_in_percentage
             ELSE 0
         END AS discount
-    FROM valid_items vi
+    FROM extracted_items ei
+    LEFT JOIN valid_items vi ON ei.customer_id = vi.customer_id AND ei.order_id = vi.order_id
     LEFT JOIN promotions p ON CAST(vi.item_key AS VARCHAR) = CAST(p.item_key AS VARCHAR)
     AND vi.order_date BETWEEN p.promo_start_date AND p.promo_end_date
 )
